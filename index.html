@@ -90,7 +90,8 @@
             mode: 'sfu',
             stream: localStream,
           });
-          messages.textContent += room.name;
+          messages.textContent += room.name+'\n';
+          messages.textContent += room.mambers.join(',')+'\n';
 
           room.once('open', () => {
             joinTrigger.disabled = true;
