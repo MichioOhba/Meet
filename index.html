@@ -12,8 +12,8 @@
       <button id="js-join-trigger">参加</button>
       <button id="js-leave-trigger">退室</button>
 
-      <section id="section2" style="float: left;">
-        <div id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
+      <section id="section2">
+        <div sytle="float: left;" id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
       </section>
       <div>
         <pre class="messages" id="js-messages"></pre>
@@ -32,8 +32,8 @@
         const video_cols = 2;
         const video_rows = 2;
         const section2 = document.getElementById("section2");
-//        section2.style.width = (video_width * video_cols) + "px";
-//        section2.style.height = (video_height * video_rows) + "px";
+        section2.style.width = (video_width * video_cols) + "px";
+        section2.style.height = (video_height * video_rows) + "px";
         // ビデオ表示用コンテナの設定
         const container = document.getElementById('container_video');
         container.style.width = (video_width * video_cols) + "px";
