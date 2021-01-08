@@ -13,7 +13,7 @@
       <button id="js-leave-trigger">退室</button>
 
       <section id="section2">
-        <div sytle="float: left;" id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
+        <div id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
       </section>
       <div>
         <pre class="messages" id="js-messages"></pre>
@@ -63,6 +63,7 @@
           newVideo.width = video_width;
           newVideo.height = video_height;
           newVideo.style.border = 'solid black 1px';
+          newVideo.style.float = 'left';
           newVideo.style.margin = '2px';
           newVideo.muted = true;
           newVideo.srcObject = localStream;
@@ -101,6 +102,7 @@
             newVideo.width = video_width;
             newVideo.height = video_height;
             newVideo.style.border = 'solid black 1px';
+            newVideo.style.float = 'left';
             newVideo.style.margin = '2px';
             newVideo.srcObject = stream;
             newVideo.playsInline = true;
