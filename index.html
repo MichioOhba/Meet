@@ -12,7 +12,7 @@
       <button id="js-join-trigger">参加</button>
       <button id="js-leave-trigger">退室</button>
 
-      <section id="section2" style="float: right;">
+      <section id="section2">
         <div id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
       </section>
       <div>
@@ -100,6 +100,7 @@
             newVideo.height = video_height;
             newVideo.style.border = 'solid black 1px';
             newVideo.style.margin = '2px';
+            newVideo.style.float ='left';
             newVideo.srcObject = stream;
             newVideo.playsInline = true;
             // mark peerId to find it later at peerLeave event
