@@ -24,8 +24,10 @@
       const Peer = window.Peer;
 
       (async function main() {
-        const video_cols = 3;
-        const video_rows = 6;
+        const video_width = 480;
+        const video_height = parseInt(video_width / 1.333333333);
+        const video_cols = 2;
+        const video_rows = 2;
         const section2 = document.getElementById("section2");
         section2.style.width = (video_width * video_cols) + "px";
         section2.style.height = (video_height * video_rows) + "px";
