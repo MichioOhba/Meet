@@ -15,6 +15,9 @@
       <section id="section2">
         <div id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
       </section>
+      <div>
+        <pre class="messages" id="js-messages"></pre>
+      </div>
 
     </div>
     <script src="//cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
@@ -31,7 +34,6 @@
         const section2 = document.getElementById("section2");
         section2.style.width = (video_width * video_cols) + "px";
         section2.style.height = (video_height * video_rows) + "px";
-        const section3 = document.getElementById("section3");
         // ビデオ表示用コンテナの設定
         const container = document.getElementById('container_video');
 
@@ -40,6 +42,7 @@
         const roomName = document.getElementById('js-name');
         const joinTrigger = document.getElementById('js-join-trigger');
         const leaveTrigger = document.getElementById('js-leave-trigger');
+        const messages = document.getElementById('js-messages');
         const sdkSrc = document.querySelector('script[src*=skyway]');
 
 //        meta.innerText = `UA: ${navigator.userAgent}SDK: ${sdkSrc ? sdkSrc.src : 'unknown'}`.trim();
@@ -57,7 +60,6 @@
           const newVideo = document.createElement('video');
           newVideo.width = video_width;
           newVideo.height = video_height;
-//          messages.textContent += '=== video_width:'+video_width+'video_height:'+video_height+' ===\n';
           newVideo.style.border = 'solid black 1px';
           newVideo.style.margin = '2px';
           newVideo.muted = true;
@@ -90,10 +92,10 @@
           }
 
           room.once('open', () => {
-//            messages.textContent += '=== 参加しました ===\n';
+            messages.textContent += '=== 参加しました ===\n';
           });
           room.on('peerJoin', peerId => {
-//            messages.textContent += `=== ${peerId}が参加 ===\n`;
+            messages.textContent += `=== ${peerId}が参加 ===\n`;
           });
 
           // ルームに参加した新しいpeerのためにリモートストリームを作成  Render remote stream for new peer join in the room
@@ -114,7 +116,7 @@
           // データの受信処理
           room.on('data', ({ data, src }) => {
             // Show a message sent to the room and who sent
-//            messages.textContent += `${src}: ${data}\n`;
+            messages.textContent += `${src}: ${data}\n`;
           });
 
           // 他メンバーの退室処理   for closing room members
@@ -123,17 +125,16 @@
             remoteVideo.srcObject.getTracks().forEach(track => track.stop());
             remoteVideo.srcObject = null;
             remoteVideo.remove();
-//            messages.textContent += `=== ${peerId}が退室 ===\n`;
+            messages.textContent += `=== ${peerId}が退室 ===\n`;
           });
 
           // 自分の退室処理    for closing myself
           room.once('close', () => {
             sendTrigger.removeEventListener('click', onClickSend);
-//            messages.textContent += '=== 退室しました ===\n';
+            messages.textContent += '=== 退室しました ===\n';
             Array.from(container.children).forEach(remoteVideo => {
               // 自分のビデオ以外をコンテナから削除
               const id = remoteVideo.getAttribute('data-peer-id');
-//              messages.textContent += '=== ID:'+id+' ===\n';
               if( id != 'myself'){
                 remoteVideo.srcObject.getTracks().forEach(track => track.stop());
                 remoteVideo.srcObject = null;
