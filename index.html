@@ -91,11 +91,11 @@
             stream: localStream,
           });
           messages.textContent += room.name+'\n';
-          messages.textContent += room.mambers.join(',')+'\n';
 
           room.once('open', () => {
             joinTrigger.disabled = true;
             leaveTrigger.disabled = false;
+            messages.textContent += room.mambers.length+'\n';
           });
 
           room.on('peerJoin', peerId => {
