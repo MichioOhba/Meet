@@ -79,12 +79,14 @@
           }
 
           // ルームに参加
-          const roomId = roomName.text;
-          alert(roomId);
-          const room = peer.joinRoom(roomId, {
-            mode: 'sfu',
-            stream: localStream,
-          });
+          if(roomName.value == ''){
+            alert("ルーム名を指定してください。");
+          } else {
+            const room = peer.joinRoom(roomName.value, {
+              mode: 'sfu',
+              stream: localStream,
+            });
+          }
 
           room.once('open', () => {
 //            messages.textContent += '=== 参加しました ===\n';
