@@ -38,8 +38,6 @@
 
         // テスト
         const roomName = document.getElementById('js-name');
-        const roomId = roomName.text;
-        alert(roomId);
         const joinTrigger = document.getElementById('js-join-trigger');
         const leaveTrigger = document.getElementById('js-leave-trigger');
         const sdkSrc = document.querySelector('script[src*=skyway]');
@@ -81,6 +79,8 @@
           }
 
           // ルームに参加
+          const roomId = roomName.text;
+          alert(roomId);
           const room = peer.joinRoom(roomId, {
             mode: 'sfu',
             stream: localStream,
