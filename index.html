@@ -13,7 +13,7 @@
       <button id="js-leave-trigger">退室</button>
 
       <section id="section2">
-        <div id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
+        <div style="float: right;" id="container_video" style="border: solid black 1px; border-color: #990099;"></div>
       </section>
       <div>
         <pre class="messages" id="js-messages"></pre>
@@ -125,7 +125,6 @@
 
           // 自分の退室処理    for closing myself
           room.once('close', () => {
-            sendTrigger.removeEventListener('click', onClickSend);
             messages.textContent += '=== 退室しました ===\n';
             Array.from(container.children).forEach(remoteVideo => {
               // 自分のビデオ以外をコンテナから削除
