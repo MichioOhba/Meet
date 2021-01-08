@@ -90,7 +90,7 @@
             mode: 'sfu',
             stream: localStream,
           });
-          messages.textContent += room.members.join(",");
+          messages.textContent += room.name;
 
           room.once('open', () => {
             joinTrigger.disabled = true;
