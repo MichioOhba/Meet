@@ -337,14 +337,17 @@
           room.on('peerLeave', peerId => {
             // 退室したメンバーのコンテナを削除
             const targetDiv = document.getElementById(peerId);
-            Array.from(targetDiv.children).forEach(elm => {
-              if( elm.className == 'video' ){
-                elm.srcObject.getTracks().forEach(track => track.stop());
-                elm.srcObject = null;
-              }
-              elm.remove();
-            });
-            targetDiv.remove();
+            try{
+              Array.from(targetDiv.children).forEach(elm => {
+                if( elm.className == 'video' ){
+                  elm.srcObject.getTracks().forEach(track => track.stop());
+                  elm.srcObject = null;
+                }
+                elm.remove();
+              });
+            } finally {
+              targetDiv.remove();
+            }
             // 退室したPeerIdをmemberNameから削除
             for( let i=1; i<memberName.length ; i++ ){
               if( memberName[i] == peerId ){
