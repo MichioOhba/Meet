@@ -43,21 +43,21 @@
           div_height = window.innerHeight-header_height-42;
         }, false );
         // 画面リサイズ時の処理登録
-        window.addEventListener( 'resize', function() {
-          const header_height = document.getElementById('header').clientHeight;
-          container.style.height = (window.innerHeight-header_height-40) + 'px';
-          div_width = window.innerWidth-42;
-          div_height = window.innerHeight-header_height-42;
-          const div = document.getElementById('presenter');
-          div.style.width = div_width + 'px';
-          div.style.height = div_height + 'px';
-          Array.from(div.children).forEach(elm => {
-            if( elm.className == 'video' ){
-              elm.width = div_width;
-              elm.height = div_height;
-            }
-          });
-        }, false );
+//        window.addEventListener( 'resize', function() {
+//          const header_height = document.getElementById('header').clientHeight;
+//          container.style.height = (window.innerHeight-header_height-40) + 'px';
+//          div_width = window.innerWidth-42;
+//          div_height = window.innerHeight-header_height-42;
+//          const div = document.getElementById('presenter');
+//          div.style.width = div_width + 'px';
+//          div.style.height = div_height + 'px';
+//          Array.from(div.children).forEach(elm => {
+//            if( elm.className == 'video' ){
+//              elm.width = div_width;
+//              elm.height = div_height;
+//            }
+//          });
+//        }, false );
       }) ();
 
       // メイン処理
@@ -76,6 +76,7 @@
 //              },
             }
         ).catch(console.error);
+        var streem = localStream;
 
         // SkyWayに接続
         const peer = (window.peer = new Peer({key: window.__SKYWAY_KEY__,debug: 3,}));
@@ -93,14 +94,21 @@
         // videoの作成
         const newVideo = document.createElement('video');
         newVideo.className = 'video';
-        newVideo.width = div_width;
+        newVideo.width = div_width/2;
         newVideo.height = div_height;
         newVideo.muted = true;
         newVideo.srcObject = localStream;
-//        newVideo.srcObject = screenStream;
         newVideo.playsInline = true;
         newDiv.appendChild(newVideo);
-        await newVideo.play().catch(console.error);
+        // videoの作成
+        const newScreen = document.createElement('video');
+        newScreen.className = 'screen';
+        newScreen.width = div_width/2;
+        newScreen.height = div_height;
+        newScreen.srcObject = screenStream;
+        newScreen.playsInline = true;
+        newDiv.appendChild(newScreen);
+        await newScreen.play().catch(console.error);
 
         // 入退室処理
         const EnterLeave = document.getElementById('js-enter-leave');
@@ -113,8 +121,7 @@
             // ルームに参加
             room = peer.joinRoom(roomName.value, {
               mode: 'sfu',
-//              stream: localStream,
-              stream: screenStream,
+              stream: streem,
             });
             EnterLeave.innerText = '退室';
           }else{
