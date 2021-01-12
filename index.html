@@ -77,7 +77,7 @@
           container.style.height = (window.innerHeight-header_height-40) + 'px';
           div_width = Math.floor((window.innerWidth-40-(2*div_cols)) / div_cols);
           div_height = Math.floor((window.innerHeight-header_height-40-(2*div_rows)) / div_rows);
-          for(let i = 0; i < members; i++){
+          for(let i = 0; i < memberName.length; i++){
             changeDivVideoSize(div_width, div_height, memberName[i].peerId);
           }
         }, false );
