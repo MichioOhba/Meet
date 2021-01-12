@@ -107,20 +107,18 @@
           // 自分の退室処理
           room.once('close', () => {
             lblMessage.innerText = '';
-            try{
-              Array.from(container.children).forEach(elm => {
-                elm.srcObject.getTracks().forEach(track => track.stop());
-                elm.srcObject = null;
-                elm.remove();
-              });
-            }
+            Array.from(container.children).forEach(elm => {
+              elm.srcObject.getTracks().forEach(track => track.stop());
+              elm.srcObject = null;
+              elm.remove();
+            });
           });
           // 他メンバーの退室処理
           room.on('peerLeave', peerId => {
             lblMessage.innerText = '講演終了　または　中断しました';
             // 退室したメンバーのコンテナを削除
             const elm = document.getElementById(peerId);
-            try{
+            if( elm != null ){
               elm.srcObject.getTracks().forEach(track => track.stop());
               elm.srcObject = null;
               elm.remove();
