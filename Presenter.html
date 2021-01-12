@@ -120,22 +120,22 @@
           }
           // 
           room.once('open', () => {
-            joinMembers.innetText = '参加しました';
+            joinMembers.innerText = '参加しました';
           });
           // 自分の退室処理
           room.once('close', () => {
             members = 0;
-            joinMembers.innetText = members;
+            joinMembers.innerText = members;
           });
           // リスナー参加時の処理
           room.on('stream', async stream => {
             members ++;
-            joinMembers.innetText = members;
+            joinMembers.innerText = members;
           });
           // リスナー退室時の処理
           room.on('peerLeave', peerId => {
             members --;
-            joinMembers.innetText = members;
+            joinMembers.innerText = members;
           });
         });
       })();
