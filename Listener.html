@@ -119,9 +119,12 @@
             }
           });
           peer.on("call", (mediaConnection) => {
-            alert('peer.on:' + mediaConnection.remoteId);
+            alert('peer.on(call):' + mediaConnection.remoteId);
             // MediaStreamで応答する
             //mediaConnection.answer(mediaStream);
+          });
+          peer.on("stream", (stream) => {
+            alert('peer.on(stream):' + stream.peerId);
           });
         });
       })();
