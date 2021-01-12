@@ -85,6 +85,7 @@
           });
           // ルームに参加した新しいpeerのためにリモートストリームを作成
           room.on('stream', async stream => {
+            alert('room.on');
             lblMessage.innerText = '講演中．．．．．';
             const newVideo = document.createElement('video');
             newVideo.id = stream.peerId;
