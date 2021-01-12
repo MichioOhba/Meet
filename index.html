@@ -196,7 +196,7 @@
           }
         });
         // 自分以外のdivを再作成
-        for( let i=1; i<joinMembers ; i++ ){
+        for( let i=1; i<memberName.length ; i++ ){
           const newDiv = document.createElement("div");
           newDiv.className = 'video-div';
           newDiv.id = memberName[i].peerId;
