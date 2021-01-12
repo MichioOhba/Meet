@@ -89,7 +89,8 @@
         // videoの作成
         const newVideo = document.createElement('video');
         newVideo.className = 'video';
-        SetChangeVideoSize(pWidth, pHeight, newVideo);
+        newVideo.width = div_width;
+        newVideo.height = div_height;
         newVideo.muted = true;
         newVideo.srcObject = localStream;
         newVideo.playsInline = true;
