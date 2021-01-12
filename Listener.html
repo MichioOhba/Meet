@@ -45,14 +45,16 @@
           div_width = window.innerWidth-42;
           div_height = window.innerHeight-header_height-42;
           const div = document.getElementById('listener');
-          div.style.width = div_width + 'px';
-          div.style.height = div_height + 'px';
-          Array.from(div.children).forEach(elm => {
-            if( elm.className == 'video' ){
-              elm.width = div_width;
-              elm.height = div_height;
-            }
-          });
+          if( div != null ){
+            div.style.width = div_width + 'px';
+            div.style.height = div_height + 'px';
+            Array.from(div.children).forEach(elm => {
+              if( elm.className == 'video' ){
+                elm.width = div_width;
+                elm.height = div_height;
+              }
+            });
+          }
         }, false );
       }) ();
 
