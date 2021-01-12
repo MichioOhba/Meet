@@ -23,6 +23,7 @@
         <button id='js-enter-leave'>入室</button>
         <label>参加者数：</label>
         <label id='js-members'></label>
+        <button id='js-screen-share'>画面共有開始</button>
       </div>
       <div class='noscroll' id='container' style='border:1px solid blue; padding:10px;'>
       </div>
@@ -33,7 +34,7 @@
       var div_width;
       var div_height;
       var myPeerId;
-      var members = 0;
+      var members = [];
       (function () {
         // 画面ロード時の処理登録
         window.addEventListener( 'load', function() {
@@ -65,7 +66,7 @@
         var room;
         const roomName = document.getElementById('js-room-name');
         const joinMembers = document.getElementById('js-members');
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const localStream = await navigator.mediaDevices.getUserMedia(
             { audio: true,
               video: true,
@@ -80,6 +81,8 @@
 
         // SkyWayに接続
         const peer = (window.peer = new Peer({key: window.__SKYWAY_KEY__,debug: 3,}));
+        const call = peer.call('fuso-broadcast-screen', screenStream);
+
         // ローカルストリーム用divの作成
         const newDiv = document.createElement("div");
         // divの設定
@@ -94,7 +97,7 @@
         // videoの作成
         const newVideo = document.createElement('video');
         newVideo.className = 'video';
-        newVideo.width = div_width/2;
+        newVideo.width = div_width;
         newVideo.height = div_height;
         newVideo.muted = true;
         newVideo.srcObject = localStream;
@@ -102,14 +105,14 @@
         newDiv.appendChild(newVideo);
         await newVideo.play().catch(console.error);
         // videoの作成
-        const newScreen = document.createElement('video');
-        newScreen.className = 'screen';
-        newScreen.width = div_width/2;
-        newScreen.height = div_height;
-        newScreen.srcObject = screenStream;
-        newScreen.playsInline = true;
-        newDiv.appendChild(newScreen);
-        await newScreen.play().catch(console.error);
+//        const newScreen = document.createElement('video');
+//        newScreen.className = 'screen';
+//        newScreen.width = div_width/2;
+//        newScreen.height = div_height;
+//        newScreen.srcObject = screenStream;
+//        newScreen.playsInline = true;
+//        newDiv.appendChild(newScreen);
+//        await newScreen.play().catch(console.error);
 
         // 入退室処理
         const EnterLeave = document.getElementById('js-enter-leave');
@@ -131,25 +134,44 @@
           }
           // 
           room.once('open', () => {
-            members = room.members.length;
-            joinMembers.innerText = members;
+            members = room.members;
+            joinMembers.innerText = members.length;
           });
           // 自分の退室処理
           room.once('close', () => {
-            members = 0;
-            joinMembers.innerText = members;
+            members = [];
+            joinMembers.innerText = members.length;
           });
           // リスナー参加時の処理
           room.on('peerJoin', peerId => {
-            members ++;
-            joinMembers.innerText = members;
+            members.push(peerId);
+            joinMembers.innerText = members.length;
           });
           // リスナー退室時の処理
           room.on('peerLeave', peerId => {
-            members --;
-            joinMembers.innerText = members;
+            for( let i=0; i<members.length; i++ ){
+              if( members[i] == peerId ){
+                members.splice(i,1);
+              }
+            }
+            joinMembers.innerText = members.length;
           });
         });
+        // 画面共有処理
+        var screenStream;
+//        const ScreenShare = document.getElementById('js-screen-share');
+//        ScreenShare.addEventListener('click', () => {
+//          if( ScreenShare.innerText == '画面共有開始' ){
+//            screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+//            for(let i=0; i<members.length; i++ ){
+//              const call = peer.call(members[i], screenStream);
+//            }
+//            ScreenShare.innerText = '画面共有終了';
+//          } else {
+//            screenStream = null;
+//            ScreenShare.innerText = '画面共有開始';
+//          }
+//        });
       })();
     </script>
   </body>
