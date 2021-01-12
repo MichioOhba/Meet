@@ -120,7 +120,8 @@
           }
           // 
           room.once('open', () => {
-            joinMembers.innerText = room.members.length;
+            members = room.members.length;
+            joinMembers.innerText = members;
           });
           // 自分の退室処理
           room.once('close', () => {
