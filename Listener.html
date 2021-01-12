@@ -45,17 +45,10 @@
           container.style.height = (window.innerHeight-header_height-40) + 'px';
           div_width = window.innerWidth-42;
           div_height = window.innerHeight-header_height-42;
-          const div = document.getElementById('listener');
-          if( div != null ){
-            div.style.width = div_width + 'px';
-            div.style.height = div_height + 'px';
-            Array.from(div.children).forEach(elm => {
-              if( elm.className == 'video' ){
-                elm.width = div_width;
-                elm.height = div_height;
-              }
-            });
-          }
+          Array.from(container.children).forEach(elm => {
+            elm.width = div_width;
+            elm.height = div_height;
+          });
         }, false );
       }) ();
 
