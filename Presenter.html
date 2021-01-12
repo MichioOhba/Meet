@@ -65,6 +65,7 @@
         var room;
         const roomName = document.getElementById('js-room-name');
         const joinMembers = document.getElementById('js-members');
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const localStream = await navigator.mediaDevices.getUserMedia(
             { audio: true,
               video: true,
@@ -95,7 +96,8 @@
         newVideo.width = div_width;
         newVideo.height = div_height;
         newVideo.muted = true;
-        newVideo.srcObject = localStream;
+//        newVideo.srcObject = localStream;
+        newVideo.srcObject = screenStream;
         newVideo.playsInline = true;
         newDiv.appendChild(newVideo);
         await newVideo.play().catch(console.error);
