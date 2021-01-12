@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>一斉送信</title>
+    <style>
+      .noscroll {
+          overflow-y: scroll;
+          -ms-overflow-style: none;    /* IE, Edge 対応 */
+          scrollbar-width: none;       /* Firefox 対応 */
+      }
+      .noscroll::-webkit-scrollbar {  /* Chrome, Safari 対応 */
+          display:none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='noscroll'>
+      <div class='noscroll' id='header'>
+        <label>ルーム名：</label>
+        <input type='text' value='Broadcast' id='js-room-name'></input>
+        <button id='js-enter-leave'>入室</button>
+      </div>
+      <div class='noscroll' id='container' style='border:1px solid blue; padding:10px;'>
+      </div>
+    </div>
+    <script src="//cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <script src="./key.js"></script>
+    <script>
+      var div_width;
+      var div_height;
+      (function () {
+        // 画面ロード時の処理登録
+        window.addEventListener( 'load', function() {
+          const header_height = document.getElementById('header').clientHeight;
+          container.style.height = (window.innerHeight-header_height-40) + 'px';
+          div_width = Math.floor((window.innerWidth-40-(2*div_cols)) / div_cols);
+          div_height = Math.floor((window.innerHeight-header_height-40-(2*div_rows)) / div_rows);
+        }, false );
+        // 画面リサイズ時の処理登録
+        window.addEventListener( 'resize', function() {
+          const header_height = document.getElementById('header').clientHeight;
+          container.style.height = (window.innerHeight-header_height-40) + 'px';
+          div_width = Math.floor((window.innerWidth-40-(2*div_cols)) / div_cols);
+          div_height = Math.floor((window.innerHeight-header_height-40-(2*div_rows)) / div_rows);
+          const div = document.getElementById('listener');
+          div.style.width = div_width + 'px';
+          div.style.height = div_height + 'px';
+          Array.from(div.children).forEach(elm => {
+            if( elm.className == 'video' ){
+              elm.width = div_width;
+              elm.height = div_height;
+            }
+          });
+        }, false );
+      }) ();
+
+      // メイン処理
+      (async function main() {
+        var room;
+        const roomName = document.getElementById('js-room-name');
+
+        // SkyWayに接続
+        const peer = (window.peer = new Peer({key: window.__SKYWAY_KEY__,debug: 3,}));
+
+        // 入退室処理
+        const EnterLeave = document.getElementById('js-enter-leave');
+        EnterLeave.addEventListener('click', () => {
+          if (!peer.open) {
+            alert('SkyWayと接続できません。');
+            return;  // perrが未接続の時終了
+          }
+          if( EnterLeave.innerText == '入室' ){
+            // ルームに参加
+            room = peer.joinRoom(roomName.value, {
+              mode: 'sfu',
+            });
+            EnterLeave.innerText = '退室';
+          }else{
+            EnterLeave.innerText = '入室';
+            room.close(),{once:true};
+          }
+          // 
+          room.once('open', () => {
+            // Nothing
+          });
+          // ルームに参加した新しいpeerのためにリモートストリームを作成
+          room.on('stream', async stream => {
+            
+            const newVideo = document.createElement('video');
+            newVideo.id = stream.peerId;
+            newVideo.width = video_width;
+            newVideo.height = video_height;
+            newVideo.style.border = 'solid black 1px';
+            newVideo.style.margin = '2px';
+            newVideo.srcObject = stream;
+            newVideo.playsInline = true;
+            container.appendChild(newVideo);
+            await newVideo.play().catch(console.error);
+          });
+          // 自分の退室処理
+          room.once('close', () => {
+            // Nothing
+          });
+          // 他メンバーの退室処理
+          room.on('peerLeave', peerId => {
+            // 退室したメンバーのコンテナを削除
+            const targetDiv = document.getElementById(peerId);
+            try{
+              Array.from(targetDiv.children).forEach(elm => {
+                elm.srcObject.getTracks().forEach(track => track.stop());
+                elm.srcObject = null;
+                elm.remove();
+              });
+            } finally {
+              targetDiv.remove();
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
+
