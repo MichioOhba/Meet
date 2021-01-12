@@ -64,7 +64,6 @@
       (async function main() {
         var room;
         const roomName = document.getElementById('js-room-name');
-        const JoinMembers = document.getElementById('js-members');
         const localStream = await navigator.mediaDevices.getUserMedia(
             { audio: true,
               video: true,
@@ -120,21 +119,25 @@
           }
           // 
           room.once('open', () => {
+            const JoinMembers = document.getElementById('js-members');
             joinMembers.innetText = '参加しました';
           });
           // 自分の退室処理
           room.once('close', () => {
             members = 0;
+            const JoinMembers = document.getElementById('js-members');
             joinMembers.innetText = members;
           });
           // リスナー参加時の処理
           room.on('stream', async stream => {
             members ++;
+            const JoinMembers = document.getElementById('js-members');
             joinMembers.innetText = members;
           });
           // リスナー退室時の処理
           room.on('peerLeave', peerId => {
             members --;
+            const JoinMembers = document.getElementById('js-members');
             joinMembers.innetText = members;
           });
         });
