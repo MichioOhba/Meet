@@ -115,13 +115,13 @@
           });
           // 他メンバーの退室処理
           room.on('peerLeave', peerId => {
-            lblMessage.innerText = '講演終了　または　中断しました';
             // 退室したメンバーのコンテナを削除
             const elm = document.getElementById(peerId);
             if( elm != null ){
               elm.srcObject.getTracks().forEach(track => track.stop());
               elm.srcObject = null;
               elm.remove();
+              lblMessage.innerText = '講演終了　または　中断しました';
             }
           });
         });
