@@ -67,6 +67,7 @@
         var room;
         const roomName = document.getElementById('js-room-name');
         const joinMembers = document.getElementById('js-members');
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const localStream = await navigator.mediaDevices.getUserMedia(
             { audio: true,
               video: true,
@@ -160,7 +161,6 @@
           });
         });
         // 画面共有処理
-        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const ScreenShare = document.getElementById('js-screen-share');
         ScreenShare.addEventListener('click', () => {
           if( ScreenShare.innerText == '画面共有開始' ){
