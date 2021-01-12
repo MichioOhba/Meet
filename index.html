@@ -154,6 +154,7 @@
       // ビデオコンテナ再作成
       function remakeContainer(room, joinMembers) {
         const videos = [];
+        const ps = [];
         switch(true){
         case joinMembers == 1:
           div_cols = 1; div_rows = 1; break;
@@ -186,8 +187,10 @@
               if( elm.className == 'video' ){
                 // 接続中のビデオを退避
                 videos.push(elm);
-                elm.remove();
+              } else {
+                ps.push(elm);
               }
+              elm.remove();
             });
             targetDiv.remove();
           }
@@ -206,14 +209,12 @@
             // 接続中のビデオサイズを変更して新しいdivに追加
             SetChangeVideoSize(div_width, div_height, videos[i-1]);
             newDiv.appendChild(videos[i-1]);
+            newDiv.appendChild(ps[i-1]);
           }
           container.appendChild(newDiv);
-          const newP = document.createElement('p');
-          newP.className = 'fukidashi';
-          newP.innerText = memberName[i].name;
-          newDiv.appendChild(newP);
         }
       }
+
       // メイン処理
       (async function main() {
         var room;
