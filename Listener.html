@@ -85,7 +85,7 @@
           });
           // ルームに参加した新しいpeerのためにリモートストリームを作成
           room.on('stream', async stream => {
-            alert('room.on');
+            alert('room.on:' + stream.peerId);
             lblMessage.innerText = '講演中．．．．．';
             const newVideo = document.createElement('video');
             newVideo.id = stream.peerId;
@@ -119,7 +119,7 @@
             }
           });
           peer.on("call", (mediaConnection) => {
-            alert('peer.on');
+            alert('peer.on:' + mediaConnection.remoteId);
             // MediaStreamで応答する
             //mediaConnection.answer(mediaStream);
           });

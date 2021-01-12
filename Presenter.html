@@ -119,7 +119,6 @@
             alert('SkyWayと接続できません。');
             return;  // perrが未接続の時終了
           }
-          const call = peer.call(peer.id, screenStream);
           if( EnterLeave.innerText == '入室' ){
             // ルームに参加
             room = peer.joinRoom(roomName.value, {
