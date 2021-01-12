@@ -157,11 +157,10 @@
           });
         });
         // 画面共有処理
-        var screenStream;
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         const ScreenShare = document.getElementById('js-screen-share');
         ScreenShare.addEventListener('click', () => {
           if( ScreenShare.innerText == '画面共有開始' ){
-            screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
             for(let i=0; i<members.length; i++ ){
               const call = peer.call(members[i], screenStream);
             }
