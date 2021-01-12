@@ -21,6 +21,7 @@
         <label>ルーム名：</label>
         <input type='text' value='Broadcast' id='js-room-name'></input>
         <button id='js-enter-leave'>入室</button>
+        <label id='js-message'></label>
       </div>
       <div class='noscroll' id='container' style='border:1px solid blue; padding:10px;'>
       </div>
@@ -62,6 +63,7 @@
       (async function main() {
         var room;
         const roomName = document.getElementById('js-room-name');
+        const lblMessage = document.getElementById('js-message');
 
         // SkyWayに接続
         const peer = (window.peer = new Peer({key: window.__SKYWAY_KEY__,debug: 3,}));
@@ -74,6 +76,7 @@
             return;  // perrが未接続の時終了
           }
           if( EnterLeave.innerText == '入室' ){
+            lblMessage.innerText = '演者が参加するまでお待ちください';
             // ルームに参加
             room = peer.joinRoom(roomName.value, {
               mode: 'sfu',
@@ -89,7 +92,7 @@
           });
           // ルームに参加した新しいpeerのためにリモートストリームを作成
           room.on('stream', async stream => {
-            
+            lblMessage.innerText = '講演中．．．．．';
             const newVideo = document.createElement('video');
             newVideo.id = stream.peerId;
             newVideo.width = div_width;
@@ -103,6 +106,7 @@
           });
           // 自分の退室処理
           room.once('close', () => {
+            lblMessage.innerText = '';
             try{
               Array.from(container.children).forEach(elm => {
                 elm.srcObject.getTracks().forEach(track => track.stop());
@@ -113,6 +117,7 @@
           });
           // 他メンバーの退室処理
           room.on('peerLeave', peerId => {
+            lblMessage.innerText = '講演終了　または　中断しました';
             // 退室したメンバーのコンテナを削除
             const elm = document.getElementById(peerId);
             try{
