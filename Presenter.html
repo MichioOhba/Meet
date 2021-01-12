@@ -120,7 +120,7 @@
           }
           // 
           room.once('open', () => {
-            alert('参加しました');
+            joinMembers.innetText = '参加しました';
           });
           // 自分の退室処理
           room.once('close', () => {
