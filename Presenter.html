@@ -21,6 +21,8 @@
         <label>ルーム名：</label>
         <input type='text' value='Broadcast' id='js-room-name'></input>
         <button id='js-enter-leave'>入室</button>
+        <label>参加者数：</label>
+        <p id='js-members'></p>
       </div>
       <div class='noscroll' id='container' style='border:1px solid blue; padding:10px;'>
       </div>
@@ -62,6 +64,7 @@
       (async function main() {
         var room;
         const roomName = document.getElementById('js-room-name');
+        const JoinMembers = document.getElementById('js-members');
         const localStream = await navigator.mediaDevices.getUserMedia(
             { audio: true,
               video: true,
@@ -122,14 +125,17 @@
           // 自分の退室処理
           room.once('close', () => {
             members = 0;
+            joinMembers.innetText = members;
           });
           // リスナー参加時の処理
           room.on('stream', async stream => {
             members ++;
+            joinMembers.innetText = members;
           });
           // リスナー退室時の処理
           room.on('peerLeave', peerId => {
             members --;
+            joinMembers.innetText = members;
           });
         });
       })();
