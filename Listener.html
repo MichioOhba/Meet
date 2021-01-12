@@ -109,22 +109,16 @@
                 elm.srcObject = null;
                 elm.remove();
               });
-            } finally {
-              targetDiv.remove();
             }
           });
           // 他メンバーの退室処理
           room.on('peerLeave', peerId => {
             // 退室したメンバーのコンテナを削除
-            const targetDiv = document.getElementById(peerId);
+            const elm = document.getElementById(peerId);
             try{
-              Array.from(targetDiv.children).forEach(elm => {
-                elm.srcObject.getTracks().forEach(track => track.stop());
-                elm.srcObject = null;
-                elm.remove();
-              });
-            } finally {
-              targetDiv.remove();
+              elm.srcObject.getTracks().forEach(track => track.stop());
+              elm.srcObject = null;
+              elm.remove();
             }
           });
         });
