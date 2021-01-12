@@ -22,7 +22,7 @@
         <input type='text' value='Broadcast' id='js-room-name'></input>
         <button id='js-enter-leave'>入室</button>
         <label>参加者数：</label>
-        <p id='js-members'></p>
+        <label id='js-members'></label>
       </div>
       <div class='noscroll' id='container' style='border:1px solid blue; padding:10px;'>
       </div>
@@ -120,7 +120,7 @@
           }
           // 
           room.once('open', () => {
-            joinMembers.innerText = '参加しました';
+            // joinMembers.innerText = '参加しました';
           });
           // 自分の退室処理
           room.once('close', () => {
@@ -128,7 +128,7 @@
             joinMembers.innerText = members;
           });
           // リスナー参加時の処理
-          room.on('stream', async stream => {
+          room.on('peerJoin', peerId => {
             members ++;
             joinMembers.innerText = members;
           });
