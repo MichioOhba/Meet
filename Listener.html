@@ -103,7 +103,15 @@
           });
           // 自分の退室処理
           room.once('close', () => {
-            // Nothing
+            try{
+              Array.from(container.children).forEach(elm => {
+                elm.srcObject.getTracks().forEach(track => track.stop());
+                elm.srcObject = null;
+                elm.remove();
+              });
+            } finally {
+              targetDiv.remove();
+            }
           });
           // 他メンバーの退室処理
           room.on('peerLeave', peerId => {
