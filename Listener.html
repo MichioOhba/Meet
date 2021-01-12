@@ -118,13 +118,12 @@
               lblMessage.innerText = '講演終了　または　中断しました';
             }
           });
-          peer.on("call", (mediaConnection) => {
-            alert('peer.on(call):' + mediaConnection.remoteId);
-            // MediaStreamで応答する
-            //mediaConnection.answer(mediaStream);
-          });
+//          peer.on("call", (mediaConnection) => {
+//            // MediaStreamで応答する
+//            mediaConnection.answer(mediaStream);
+//          });
           peer.on("stream", (stream) => {
-            alert('peer.on(stream):' + stream.peerId);
+            alert('peer.on(stream):');
           });
         });
       })();

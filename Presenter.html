@@ -35,6 +35,7 @@
       var div_height;
       var myPeerId;
       var members = [];
+      var peerIds = [];
       (function () {
         // 画面ロード時の処理登録
         window.addEventListener( 'load', function() {
@@ -95,7 +96,7 @@
         // videoの作成
         const newVideo = document.createElement('video');
         newVideo.className = 'video';
-        newVideo.width = div_width;
+        newVideo.width = div_width/2;
         newVideo.height = div_height;
         newVideo.muted = true;
         newVideo.srcObject = localStream;
@@ -103,14 +104,14 @@
         newDiv.appendChild(newVideo);
         await newVideo.play().catch(console.error);
         // videoの作成
-//        const newScreen = document.createElement('video');
-//        newScreen.className = 'screen';
-//        newScreen.width = div_width/2;
-//        newScreen.height = div_height;
-//        newScreen.srcObject = screenStream;
-//        newScreen.playsInline = true;
-//        newDiv.appendChild(newScreen);
-//        await newScreen.play().catch(console.error);
+        const newScreen = document.createElement('video');
+        newScreen.className = 'screen';
+        newScreen.width = div_width/2;
+        newScreen.height = div_height;
+        newScreen.srcObject = screenStream;
+        newScreen.playsInline = true;
+        newDiv.appendChild(newScreen);
+        await newScreen.play().catch(console.error);
 
         // 入退室処理
         const EnterLeave = document.getElementById('js-enter-leave');
@@ -153,6 +154,9 @@
               }
             }
             joinMembers.innerText = members.length;
+          });
+          peer.on("open", (id) => {
+            peerIds.push(id);
           });
         });
         // 画面共有処理
