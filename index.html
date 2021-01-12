@@ -196,8 +196,7 @@
           }
         });
         // 退避したdivを再作成
-        for( let i=1; i<memberName.length ; i++ ){
-          if( (i-1) < videos.length ){
+        for( let i=0; i<videos.length ; i++ ){
             const newDiv = document.createElement("div");
             newDiv.className = 'video-div';
             newDiv.id = memberName[i].peerId;
@@ -206,11 +205,10 @@
             newDiv.style.width = div_width + 'px';
             newDiv.style.height = div_height + 'px';
             newDiv.style.float = 'left';
-            SetChangeVideoSize(div_width, div_height, videos[i-1]);
-            newDiv.appendChild(videos[i-1]);
-            newDiv.appendChild(ps[i-1]);
+            SetChangeVideoSize(div_width, div_height, videos[i]);
+            newDiv.appendChild(videos[i]);
+            newDiv.appendChild(ps[i]);
             container.appendChild(newDiv);
-          }
         }
       }
 
