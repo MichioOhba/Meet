@@ -13,6 +13,10 @@
       .noscroll::-webkit-scrollbar {  /* Chrome, Safari 対応 */
           display:none;
       }
+      .video-div {
+          position: relative;
+          vertical-align: middle;
+      }
     </style>
   </head>
   <body>
@@ -31,6 +35,7 @@
     <script>
       var div_width;
       var div_height;
+      var screenElementId;
       (function () {
         // 画面ロード時の処理登録
         window.addEventListener( 'load', function() {
@@ -38,6 +43,16 @@
           container.style.height = (window.innerHeight-header_height-40) + 'px';
           div_width = window.innerWidth-42;
           div_height = window.innerHeight-header_height-42;
+          // divの設定
+          const newDiv = document.createElement("div");
+          newDiv.className = 'video-div';
+          newDiv.id = 'listener';
+          newDiv.align = 'center';
+          newDiv.style.border ='1px solid gray';
+          newDiv.style.width = div_width + 'px';
+          newDiv.style.height = div_height + 'px';
+          newDiv.style.float = 'left';
+          container.appendChild(newDiv);
         }, false );
         // 画面リサイズ時の処理登録
         window.addEventListener( 'resize', function() {
@@ -45,10 +60,25 @@
           container.style.height = (window.innerHeight-header_height-40) + 'px';
           div_width = window.innerWidth-42;
           div_height = window.innerHeight-header_height-42;
-          Array.from(container.children).forEach(elm => {
-            elm.width = div_width;
-            elm.height = div_height;
-          });
+          const div = document.getElementById('listener');
+          div.style.width = div_width + 'px';
+          div.style.height = div_height + 'px';
+          if( div.childElementCount == 2 ){
+            Array.from(div.children).forEach(elm => {
+              if( elm.id == screenElementId ){
+                elm.width = div_width * 0.9;
+                elm.height = div_height * 0.9;
+              } else {
+                elm.width = div_width * 0.1;
+                elm.height = div_height * 0.1;
+              }
+            });
+          } else {
+            Array.from(div.children).forEach(elm => {
+               elm.width = div_width;
+               elm.height = div_height;
+            });
+          }
         }, false );
       }) ();
 
@@ -85,23 +115,44 @@
           });
           // ルームに参加した新しいpeerのためにリモートストリームを作成
           room.on('stream', async stream => {
-            alert('room.on:' + stream.peerId);
-            lblMessage.innerText = '講演中．．．．．';
-            const newVideo = document.createElement('video');
-            newVideo.id = stream.peerId;
-            newVideo.width = div_width;
-            newVideo.height = div_height;
-            newVideo.style.border = 'solid black 1px';
-            newVideo.style.margin = '2px';
-            newVideo.srcObject = stream;
-            newVideo.playsInline = true;
-            container.appendChild(newVideo);
-            await newVideo.play().catch(console.error);
+            lblMessage.innerText = '接続中．．．．．';
+            const div = document.getElementById('listener');
+            if( div.childElementCount < 2 ){
+              // videoの作成
+              const newVideo = document.createElement('video');
+              newVideo.id = stream.peerId;
+              newVideo.style.border ='1px solid gray';
+              newVideo.width = div_width;
+              newVideo.height = div_height;
+              newVideo.srcObject = stream;
+              newVideo.playsInline = true;
+              const newDiv = document.getElementById('listener');
+              newDiv.appendChild(newVideo);
+              if( div.childElementCount == 2 ){
+                screenElementId = stream.peerId;
+                Array.from(div.children).forEach(elm => {
+                  if( elm.id == stream.peerId ){
+                    elm.width = div_width * 0.9;
+                    elm.height = div_height * 0.9;
+                  } else {
+                    elm.width = div_width * 0.1;
+                    elm.height = div_height * 0.1;
+                  }
+                });
+              } else {
+                Array.from(div.children).forEach(elm => {
+                   elm.width = div_width;
+                   elm.height = div_height;
+                });
+              }
+              await newVideo.play().catch(console.error);
+            }
           });
           // 自分の退室処理
           room.once('close', () => {
             lblMessage.innerText = '';
-            Array.from(container.children).forEach(elm => {
+            const div = document.getElementById('listener');
+            Array.from(div.children).forEach(elm => {
               elm.srcObject.getTracks().forEach(track => track.stop());
               elm.srcObject = null;
               elm.remove();
@@ -115,15 +166,18 @@
               elm.srcObject.getTracks().forEach(track => track.stop());
               elm.srcObject = null;
               elm.remove();
-              lblMessage.innerText = '講演終了　または　中断しました';
             }
-          });
-//          peer.on("call", (mediaConnection) => {
-//            // MediaStreamで応答する
-//            mediaConnection.answer(mediaStream);
-//          });
-          peer.on("stream", (stream) => {
-            alert('peer.on(stream):');
+            switch( document.getElementById('listener').childElementCount ){
+            case 0:
+              lblMessage.innerText = '';
+              break;
+            case 1:
+              const div = document.getElementById('listener');
+              Array.from(div.children).forEach(elm => {
+                 elm.width = div_width;
+                 elm.height = div_height;
+              });
+            }
           });
         });
       })();
