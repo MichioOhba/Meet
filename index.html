@@ -134,6 +134,7 @@
       let haveDisplayMedia = false;  // アプリケーション共有フラグ
 
       let canvasTimer = null;
+      let pointerTimer = null;
       let fileReader = new FileReader();
       let files = null;
       let target_page = null;
@@ -842,7 +843,12 @@
           pointer.addEventListener('mouseup', function(event){
             const context = pointer.getContext('2d');
             context.clearRect(0, 0, share_container_width, share_container_height);
-            roomMain.send(JSON.stringify({cmd:'PointerClear'}));
+            clearInterval(pointerTimer);
+            pointerTimer = setInterval(function(){
+              roomMain.send(JSON.stringify({cmd:'PointerClear'}));
+              clearInterval(pointerTimer);
+              pointerTimer = null;
+            }, 120);
           });
           //---------------------------------------------------------------------------
           // マウスカーソル移動時の処理
@@ -857,18 +863,20 @@
               context.beginPath();
               context.arc( mousePos.x, mousePos.y, sel_size.value, 0, Math.PI*2);
               context.fill();
-              const send = ev_cnt==0?true:false;
-              if( send ){
-                const obj = {
-                  x:mousePos.x,
-                  y:mousePos.y,
-                  color:sel_color.value,
-                  size:sel_size.value,
-                  canvas:{width:pointer.width, height:pointer.height}
-                }
-                roomMain.send(JSON.stringify({cmd:'Pointer', data:obj}));
+              const obj = {
+                x:mousePos.x,
+                y:mousePos.y,
+                color:sel_color.value,
+                size:sel_size.value,
+                canvas:{width:pointer.width, height:pointer.height}
               }
-              ev_cnt = ++ev_cnt>8?0:ev_cnt;
+              if( pointerTimer == null ){
+                pointerTimer = setInterval(function(){
+                  roomMain.send(JSON.stringify({cmd:'Pointer', data:obj}));
+                  clearInterval(pointerTimer);
+                  pointerTimer = null;
+                }, 120);
+              }
             }
           });
         });
