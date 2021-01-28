@@ -48,7 +48,7 @@
   firebase.analytics();
 
 
-  firebase.database().ref("fuso-meet-db-default-rtdb").on("value").then(function(snapshot){
+  firebase.database("test").ref("fuso-meet-db-default-rtdb").on("value").then(function(snapshot){
     if(snapshot.exists()){
       var name = snapshot.val().name;
       console.log("name: " + name);
