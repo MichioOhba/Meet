@@ -83,14 +83,6 @@
           newDiv.style.height = div_height + 'px';
           newDiv.style.float = 'left';
           container.appendChild(newDiv);
-
-  firebase.database().ref().once("value").then(function(snapshot){
-    if(snapshot.exists()){
-      var name = snapshot.val().name;
-      console.log("name: " + name);
-    }
-  });
-
         }, false );
         // 画面リサイズ時の処理登録
         window.addEventListener( 'resize', function() {
@@ -125,6 +117,14 @@
         var room;
         const roomName = document.getElementById('js-room-name');
         const lblMessage = document.getElementById('js-message');
+
+  firebase.database().ref().once("value").then(function(snapshot){
+    if(snapshot.exists()){
+      var name = snapshot.val().name;
+      console.log("name: " + name);
+    }
+  });
+
 
         // SkyWayに接続
         const peer = (window.peer = new Peer({key: window.__SKYWAY_KEY__,debug: 3,}));
