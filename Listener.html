@@ -21,6 +21,8 @@
   </head>
   <body>
 
+
+
 <!-- The core Firebase JS SDK is always required and must be listed first -->
 <script src="https://www.gstatic.com/firebasejs/8.2.4/firebase-app.js"></script>
 
@@ -44,6 +46,8 @@
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
 </script>
+
+
 
     <div class='noscroll'>
       <div class='noscroll' id='header'>
@@ -78,6 +82,14 @@
           newDiv.style.height = div_height + 'px';
           newDiv.style.float = 'left';
           container.appendChild(newDiv);
+
+firebase.database().ref().once("value").then(function(snapshot){
+  if(snapshot.exists()){
+    var name = snapshot.val().name;
+    console.log("name: " + name);
+  }
+});
+
         }, false );
         // 画面リサイズ時の処理登録
         window.addEventListener( 'resize', function() {
