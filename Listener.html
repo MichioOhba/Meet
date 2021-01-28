@@ -118,7 +118,7 @@
         const roomName = document.getElementById('js-room-name');
         const lblMessage = document.getElementById('js-message');
 
-  firebase.database().ref().once("value").then(function(snapshot){
+  firebase.database().ref("fuso-meet-db-default-rtdb").once("value").then(function(snapshot){
     if(snapshot.exists()){
       var name = snapshot.val().name;
       console.log("name: " + name);
