@@ -45,6 +45,14 @@
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
+
+  firebase.database().ref().once("value").then(function(snapshot){
+    if(snapshot.exists()){
+      var name = snapshot.val().name;
+      console.log("name: " + name);
+    }
+  });
+
 </script>
 
 
@@ -82,14 +90,6 @@
           newDiv.style.height = div_height + 'px';
           newDiv.style.float = 'left';
           container.appendChild(newDiv);
-
-firebase.database().ref().once("value").then(function(snapshot){
-  if(snapshot.exists()){
-    var name = snapshot.val().name;
-    console.log("name: " + name);
-  }
-});
-
         }, false );
         // 画面リサイズ時の処理登録
         window.addEventListener( 'resize', function() {
