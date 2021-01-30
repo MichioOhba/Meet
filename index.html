@@ -24,9 +24,9 @@
       }
       .fukidashi {
           display: none;
-          width: 200px;
+//          width: 200px;
           position: absolute;
-          top: 0;
+          top: 0px;
           padding: 2px;
           border-radius: 0px;
           background: blue;
@@ -76,13 +76,13 @@
       <div id='div_header'>
         <label id='lbl_camera' class='v_middle'>カメラ：</label>
         <select id='sel_camera' class='v_middle'>
-          <option value="front" selected>フロント</option>
-          <option value="ria">リア</option>
+          <option value="front" selected>前</option>
+          <option value="ria">後</option>
         </select>
         <label id='lbl_name' class='v_middle'>参加者名：</label>
-        <input id='input_my_name' class='v_middle' type='text' placeholder='自分の表示名を入力'></input>
+        <input id='input_my_name' class='v_middle' type='text' placeholder='表示名を入力' size=10></input>
         <label id='lbl_room' class='v_middle'>ルーム名：</label>
-        <input id='input_room_name' class='v_middle' type='text' value='TestRoom'></input>
+        <input id='input_room_name' class='v_middle' type='text' value='TestRoom' size=10></input>
         <label id='lbl_share' class='v_middle'hidden>共有：</label>
         <button id='button_screen_share' class='v_middle' hidden>アプリケーション画面</button>
         <label id='lbl_file_selector' hidden>
@@ -142,6 +142,9 @@
       let videoAspectRate = 1.33333333;
 //      let shareAspectRate = 1.77777777;
 //      let videoAspectRate = 1.77777777;
+      let audioAnalyzer = null;
+      let audioSource = null;
+      let audioContext = null;
       const Agent = navigator.userAgent;
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +157,7 @@
         window.addEventListener( 'load', function() {
           let video_cnt = 0;
 
+//          alert('Agent:'+Agent);
           navigator.mediaDevices.enumerateDevices()
           .then(function(devices) {
             devices.forEach(function(device) {
@@ -170,13 +174,14 @@
           }).catch(function(err) {
             console.log(err.name + ": " + err.message);
           });
-          share_container_setting( false )
           video_container_setting( false, 1 );
+          share_container_setting( false )
         }, false );
         //******************************************************************************************
         // 画面リサイズイベント
         //******************************************************************************************
         window.addEventListener( 'resize', function() {
+          video_container_setting( haveImageMedia || haveDisplayMedia, members );
           share_container_setting( haveImageMedia || haveDisplayMedia );
           if( haveImageMedia ){
             // 画像データの再取得
@@ -193,7 +198,6 @@
               canvasTimer = null;
             }, 100);
           }
-          video_container_setting( haveImageMedia || haveDisplayMedia, members );
         }, false );
       }) ();
 
@@ -201,12 +205,69 @@
       // サブルーチン
       //////////////////////////////////////////////////////////////////////////////////////////////////////
       //******************************************************************************************
+      // video_containerの設定
+      //******************************************************************************************
+      function video_container_setting(pCommonDisplay, pjoinMembers){
+        if( pCommonDisplay ){
+          switch(true){
+          case pjoinMembers <= 5:
+            video_cols = 1; video_rows = 5; break;
+          case pjoinMembers > 5 && pjoinMembers <= 10:
+            video_cols = 1; video_rows = 10; break;
+          default:
+            video_cols = 2; video_rows = 10;
+          }
+          video_container_width = Math.floor((window.innerWidth - 20) * 0.15) * video_cols;
+        }else{
+          switch(true){
+          case pjoinMembers == 1:
+            video_cols = 1; video_rows = 1; break;
+          case pjoinMembers == 2:
+            video_cols = 2; video_rows = 1; break;
+          case pjoinMembers > 2 && pjoinMembers <= 4:
+            video_cols = 2; video_rows = 2; break;
+          case pjoinMembers > 4 && pjoinMembers <= 6:
+            video_cols = 3; video_rows = 2; break;
+          case pjoinMembers > 6 && pjoinMembers <= 9:
+            video_cols = 3; video_rows = 3; break;
+          case pjoinMembers > 9 && pjoinMembers <= 12:
+            video_cols = 4; video_rows = 3; break;
+          case pjoinMembers > 12 && pjoinMembers <= 16:
+            video_cols = 4; video_rows = 4; break;
+          default:
+            video_cols = 5; video_rows = 4;
+          }
+          video_container_width = window.innerWidth - 20;
+        }
+        if( div_header.clientHeight == 0 ){
+          video_container_height = window.innerHeight - lbl_message.clientHeight - 20;
+        }else{
+          video_container_height = window.innerHeight - div_header.clientHeight - 20;
+        }
+        video_container.style.width = video_container_width + 'px';
+        video_container.style.height = video_container_height + 'px';
+        div_width = Math.floor((video_container_width - (2 * video_cols)) / video_cols);
+        div_height = Math.floor((video_container_height - (2 * video_rows)) / video_rows);
+        Array.from(video_container.children).forEach(targetDiv => {
+          Array.from(targetDiv.children).forEach(elm => {
+            if( elm.className == 'video' ){
+              for( let i=0; i<memberName.length ; i++ ){
+                if( memberName[i].peerId == targetDiv.id && memberName[i].video ){
+                  changeDivVideoSize(div_width, div_height, targetDiv.id);
+                  break;
+                }
+              }
+            }
+          });
+        });
+      }
+      //******************************************************************************************
       // share_containerの設定
       //******************************************************************************************
       function share_container_setting( pCommonDisplay ){
         if( pCommonDisplay ){
           // 共有画面　表示時の処理
-          share_container_width = Math.floor((window.innerWidth - 20) * 0.8);
+          share_container_width = window.innerWidth - video_container_width -20;
           if( div_header.clientHeight == 0 ){
             share_container_height = window.innerHeight - lbl_message.clientHeight - 20;
           }else{
@@ -241,62 +302,6 @@
           share_container.style.width = share_container.style.height = '0px';
           share_container.style.border = 'none';
         }
-      }
-      //******************************************************************************************
-      // video_containerの設定
-      //******************************************************************************************
-      function video_container_setting(pCommonDisplay, pjoinMembers){
-        if( pCommonDisplay ){
-          switch(true){
-          case pjoinMembers <= 5:
-            video_cols = 1; video_rows = 5; break;
-          case pjoinMembers > 5 && pjoinMembers <= 10:
-            video_cols = 1; video_rows = 10; break;
-          default:
-            video_cols = 2; video_rows = 10;
-          }
-        }else{
-          switch(true){
-          case pjoinMembers == 1:
-            video_cols = 1; video_rows = 1; break;
-          case pjoinMembers == 2:
-            video_cols = 2; video_rows = 1; break;
-          case pjoinMembers > 2 && pjoinMembers <= 4:
-            video_cols = 2; video_rows = 2; break;
-          case pjoinMembers > 4 && pjoinMembers <= 6:
-            video_cols = 3; video_rows = 2; break;
-          case pjoinMembers > 6 && pjoinMembers <= 9:
-            video_cols = 3; video_rows = 3; break;
-          case pjoinMembers > 9 && pjoinMembers <= 12:
-            video_cols = 4; video_rows = 3; break;
-          case pjoinMembers > 12 && pjoinMembers <= 16:
-            video_cols = 4; video_rows = 4; break;
-          default:
-            video_cols = 5; video_rows = 4;
-          }
-        }
-        video_container_width = window.innerWidth - share_container_width - 20;
-        if( div_header.clientHeight == 0 ){
-          video_container_height = window.innerHeight - lbl_message.clientHeight - 20;
-        }else{
-          video_container_height = window.innerHeight - div_header.clientHeight - 20;
-        }
-        video_container.style.width = video_container_width + 'px';
-        video_container.style.height = video_container_height + 'px';
-        div_width = Math.floor((video_container_width - (2 * video_cols)) / video_cols);
-        div_height = Math.floor((video_container_height - (2 * video_rows)) / video_rows);
-        Array.from(video_container.children).forEach(targetDiv => {
-          Array.from(targetDiv.children).forEach(elm => {
-            if( elm.className == 'video' ){
-              for( let i=0; i<memberName.length ; i++ ){
-                if( memberName[i].peerId == targetDiv.id && memberName[i].video ){
-                  changeDivVideoSize(div_width, div_height, targetDiv.id);
-                  break;
-                }
-              }
-            }
-          });
-        });
       }
       //******************************************************************************************
       // CANVASの書込み設定
@@ -405,20 +410,20 @@
             if( elm.className == 'fukidashi' ){ not_exist = false; }
           });
           if( not_exist ){
-            const newP = document.createElement('p');
-            newP.className = 'fukidashi';
+            const newLabel = document.createElement('label');
+            newLabel.className = 'fukidashi';
             for( let i=0; i<memberName.length; i++ ){
               if( pStream == undefined ){
                 if( memberName[i].peerId == 'myself'){
-                  newP.innerText = memberName[i].name;
+                  newLabel.innerText = memberName[i].name;
                 }
               }else{
                 if( memberName[i].peerId == pStream.peerId || memberName[i].peerId == 'myself'){
-                  newP.innerText = memberName[i].name;
+                  newLabel.innerText = memberName[i].name;
                 }
               }
             }
-            pDiv.appendChild(newP);
+            pDiv.appendChild(newLabel);
           }
         }
         return newVideo;
@@ -453,17 +458,16 @@
       // 共有画面とビデオコンテナ再作成
       //******************************************************************************************
       function remakeContainer(joinMembers) {
+        video_container_setting( haveImageMedia || haveDisplayMedia, joinMembers );
         if( !haveImageMedia ){
           //***** 共有画面なし時の処理 *****
           share_container_setting( haveImageMedia || haveDisplayMedia );
-          video_container_setting( haveImageMedia || haveDisplayMedia, joinMembers );
         } else {
           //***** 共有画面あり時の処理 *****
           if( haveImageMedia != saveImageMedia ){
             share_container_setting( haveImageMedia || haveDisplayMedia );
             if( target_page !== null ){ fileReader.readAsDataURL(files[target_page]); }
           }
-          video_container_setting( haveImageMedia || haveDisplayMedia, joinMembers );
         }
         saveImageMedia = haveImageMedia;
       }
@@ -473,6 +477,23 @@
       //******************************************************************************************
       const wait_msec = (msec) => {
         return new Promise((resolve, reject) => { setTimeout(resolve, msec); });
+      };
+
+      //******************************************************************************************
+      // 音声モニタ用タイマー
+      //******************************************************************************************
+      function get_audio(index){
+        return setInterval(function(){
+          const div = document.getElementById(memberName[index].peerId);
+          const data = new Float32Array(audioAnalyzer.frequencyBinCount / 4);
+          audioAnalyzer.getFloatFrequencyData(data);
+          let sum=0;
+          for( let i=0; i<data.length; i++){sum+=data[i]*-1;}
+          const style = sum/data.length > 100 ? '1px solid black' : '1px solid darkorange';
+          Array.from(div.children).forEach(elm => {
+            if( elm.className == 'video' ){elm.style.border = style;}
+          });
+        }, 100);
       };
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -487,7 +508,7 @@
           video: {
              width : {ideal:640},
              height: {ideal:Math.floor(640 / videoAspectRate)},
-             frameRate: { ideal: 10, max: 15 },
+//             frameRate: { ideal: 10, max: 15 },
              facingMode: 'user',
           },
         }
@@ -496,12 +517,13 @@
           .catch(e => {alert('カメラとの接続でエラーが発生しました');});
         // ローカルストリーム用divの作成
         const newDiv = document.createElement("div");
-        memberName.push({peerId:myPeerId, name:'未参加', video:true});
+        memberName.push({peerId:myPeerId, name:'未参加', video:true, audioTimer:undefined});
         let myVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, localStream, true);
         members = 1;
         if( localStream != undefined ){
           await myVideo.play().catch(console.error);
         }
+        audioContext = new AudioContext();
 
         //******************************************************************************************
         // カメラ選択チェンジイベント
@@ -566,7 +588,7 @@
           // SkyWay room参加完了イベント発生
           //================================================================================
           roomMain.once('open', () => {
-            roomMain.send(JSON.stringify({cmd:'MyName', data:input_my_name.value}));
+            roomMain.send(JSON.stringify({cmd:'MyName', data:input_my_name.value, agent:Agent}));
             button_screen_share.disabled = false;
             lbl_message.innerText = '[' + input_room_name.value + ']　';
           });
@@ -591,22 +613,20 @@
               newVideo = makeVideoContainer(share_container, newDiv, disp_width, disp_height, stream, false);
             } else {
               // ビデオ画面のstream受信
+              audioAnalyzer = audioContext.createAnalyser();
+              audioSource = audioContext.createMediaStreamSource(stream);
+              audioSource.connect(audioAnalyzer);
               newDiv = document.createElement("div");
               newVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, stream, false);
-              let not_exist = true;
-              for( let i=0; i<memberName.length; i++ ){
-                if( memberName[i].peerId == stream.peerId ){
-                  memberName[i].video = true;
-                  not_exist = false;
-                  break;
-                }
-              }
-              if( not_exist ){
-                memberName.push({peerId:stream.peerId, name:'未定', video:true});
+              const index = memberName.findIndex(obj => obj.peerId === stream.peerId);
+              if( index >= 0 ){
+                memberName[index].video = true;
+                memberName[index].audioTimer = get_audio(index);
+                remakeContainer(members);
+              }else{
+                memberName.push({peerId:stream.peerId, name:'未定', video:true, audioTimer:get_audio(memberName.length)});
                 remakeContainer(++members);
                 roomMain.send(JSON.stringify({cmd:'WhatYourName'}));
-              }else{
-                remakeContainer(members);
               }
             }
             await newVideo.play().catch(console.error);
@@ -662,6 +682,12 @@
               haveImageMedia = saveImageMedia = false;
               canvas_img.name = '';
             }
+            // 
+            for( let i=0; i<memberName.length; i++ ){
+              if( memberName[i].audioTimer != undefined ){
+                clearInterval(memberName[i].audioTimer);
+              }
+            }
             // 自分のPeerId以外をすべて削除
             memberName.splice(1);
             memberName[0].peerId = 'myself';
@@ -689,12 +715,11 @@
             targetDiv.remove();
             // 退室したPeerIdをmemberNameから削除
             for( let i=1; i<memberName.length ; i++ ){
-              if( memberName[i] == peerId ){ memberName.splice(i, 1); }
-            }
-            // 退室メンバーがCanvas画面の発信元なら共有を解除
-            if( canvas_img.name === peerId ){
-              haveImageMedia = saveImageMedia = false;
-              canvas_img.name = '';
+              if( memberName[i].peerId == peerId ){
+                console.log('audioTimer['+(i)+']'+memberName[i].audioTimer);
+                clearInterval(memberName[i].audioTimer);
+                memberName.splice(i, 1);
+              }
             }
             if( isDisplayMedia ){
               // 共有アプリケーションの終了処理
@@ -711,6 +736,13 @@
               // 参加者の退室処理
               --members;
             }
+            // 退室メンバーがCanvas画面の発信元なら共有を解除
+            if( canvas_img.name === peerId ){
+              image_ctrl_off();
+              pointer_ctrl_off();
+              haveImageMedia = saveImageMedia = false;
+              canvas_img.name = '';
+            }
             remakeContainer(members);
           });
           //================================================================================
@@ -720,16 +752,17 @@
             const context = pointer.getContext('2d');
             const peerId = `${src}`;
             const recdata = JSON.parse(`${data}`);
-            let not_exist, scr_height, img;
+            let img;
             switch(recdata.cmd){
             case 'MyName':
               // 参加者情報受信
-              memberName.push({peerId:peerId, name:recdata.data, video:false});
+              memberName.push({peerId:peerId, name:recdata.data, video:false, audioTimer:undefined});
+              console.log('>>>Agent-MyName:'+recdata.agent);
               members++;
               break;
             case 'WhatYourName':
               // 参加者情報要求データ受信
-              roomMain.send(JSON.stringify({cmd:'AnswerMyName', data:input_my_name.value}));
+              roomMain.send(JSON.stringify({cmd:'AnswerMyName', data:input_my_name.value, agent:Agent}));
               if( haveImageMedia ){
                 img = canvas_img.toDataURL();
                 roomMain.send(JSON.stringify({cmd:'DispImage', data:img}));
@@ -737,16 +770,11 @@
               break;
             case 'AnswerMyName':
               // 参加者情報応答データ受信
-              not_exist = true;
-              for( let i=0; i<memberName.length; i++ ){
-                if( memberName[i].peerId == peerId ){
-                  memberName[i].name = recdata.AnswerMyName;
-                  not_exist = false;
-                  break;
-                }
-              }
-              if( not_exist ){
-                memberName.push({peerId:peerId, name:recdata.AnswerMyName, video:false});
+              const index = memberName.findIndex(obj => obj.peerId === peerId);
+              if( index >= 0 ){
+                memberName[index].name = recdata.AnswerMyName;
+              }else{
+                memberName.push({peerId:peerId, name:recdata.AnswerMyName, video:false, audioTimer:undefined});
                 members++;
               }
               const targetDiv = document.getElementById(peerId);
@@ -755,6 +783,7 @@
                   elm.innerText = recdata.data;
                 }
               });
+              console.log('>>>Agent-AnswerMyName:'+recdata.agent);
               break;
             case 'DispImage':
               // 画像データ受信
@@ -856,21 +885,23 @@
           pointer.addEventListener('mousemove', function(event){
             if ( event.which == 1 ){
               // 左ボタンクリック中
-              const mousePos = getMousePosition(pointer, event);
-              const context = pointer.getContext('2d');
-              context.clearRect(0, 0, share_container_width, share_container_height);
-              context.fillStyle = sel_color.value;
-              context.beginPath();
-              context.arc( mousePos.x, mousePos.y, sel_size.value, 0, Math.PI*2);
-              context.fill();
-              const obj = {
-                x:mousePos.x,
-                y:mousePos.y,
-                color:sel_color.value,
-                size:sel_size.value,
-                canvas:{width:pointer.width, height:pointer.height}
-              }
               if( pointerTimer == null ){
+                // SkyWayのデータ送信は100msec毎に送信されるので、
+                // 遅延を避けるために120msec後に送信
+                const mousePos = getMousePosition(pointer, event);
+                const context = pointer.getContext('2d');
+                context.clearRect(0, 0, share_container_width, share_container_height);
+                context.fillStyle = sel_color.value;
+                context.beginPath();
+                context.arc( mousePos.x, mousePos.y, sel_size.value, 0, Math.PI*2);
+                context.fill();
+                const obj = {
+                  x:mousePos.x,
+                  y:mousePos.y,
+                  color:sel_color.value,
+                  size:sel_size.value,
+                  canvas:{width:pointer.width, height:pointer.height}
+                }
                 pointerTimer = setInterval(function(){
                   roomMain.send(JSON.stringify({cmd:'Pointer', data:obj}));
                   clearInterval(pointerTimer);
@@ -880,6 +911,7 @@
             }
           });
         });
+
         //******************************************************************************************
         // 画像データ共有処理
         //******************************************************************************************
@@ -951,4 +983,3 @@
     </script>
   </body>
 </html>
-
