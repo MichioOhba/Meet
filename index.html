@@ -172,9 +172,11 @@
                 console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
               });
             }).catch(function(err) {
+              alert(err);
               console.log(err.name + ": " + err.message);
             });
           }catch (e){
+            alert(e);
             lbl_camera.hidden = sel_camera.hidden = true;
           }
           alert('load start);
