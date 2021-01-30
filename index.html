@@ -179,10 +179,15 @@
             alert(e);
             lbl_camera.hidden = sel_camera.hidden = true;
           }
-          alert('load start');
           video_container_setting( false, 1 );
           share_container_setting( false )
-          alert('load ok');
+
+          request = new XMLHttpRequest();
+      request.open("GET", "sound2.mp3", true);
+      request.responseType = "arraybuffer";
+      request.onload = completeOnLoad;
+      request.send();
+
         }, false );
         //******************************************************************************************
         // 画面リサイズイベント
