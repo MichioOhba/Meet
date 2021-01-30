@@ -527,7 +527,7 @@
         memberName.push({peerId:myPeerId, name:'未参加', video:true, audioTimer:undefined});
         let myVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, localStream, true);
         members = 1;
-        alret('aaa');
+        alert('aaa');
         if( localStream != undefined ){
           await myVideo.play().catch(console.error);
         }
