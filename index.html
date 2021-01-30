@@ -145,6 +145,7 @@
       let audioAnalyzer = null;
       let audioSource = null;
       let audioContext = null;
+      let audioRequest = null;
       const Agent = navigator.userAgent;
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,13 +183,30 @@
           video_container_setting( false, 1 );
           share_container_setting( false )
 
-          const request = new XMLHttpRequest();
-          request.open("GET", "sound2.mp3", true);
-          request.responseType = "arraybuffer";
-          request.onload = completeOnLoad;
-          request.send();
+          audioRequest = new XMLHttpRequest();
+          audioRequest.open("GET", "sound2.mp3", true);
+          audioRequest.responseType = "arraybuffer";
+          audioRequest.onload = completeOnLoad;
+          audioRequest.send();
 
         }, false );
+
+    function completeOnLoad() {
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioContext = new AudioContext();
+      audioContext.createBufferSource().start(0);
+
+      // オーディオをデコード
+      audioContext.decodeAudioData(audioRequest.response, function (buf) {
+        source.buffer = buf;
+        source.loop = false;
+
+      });
+
+//      audioSource = audioContext.createBufferSource();
+    }
+        
+        
         //******************************************************************************************
         // 画面リサイズイベント
         //******************************************************************************************
@@ -535,8 +553,6 @@
         if( localStream != undefined ){
           await myVideo.play().catch(console.error);
         }
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioContext = new AudioContext();
         alert('bbb');
 
         //******************************************************************************************
