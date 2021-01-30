@@ -527,12 +527,11 @@
         memberName.push({peerId:myPeerId, name:'未参加', video:true, audioTimer:undefined});
         let myVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, localStream, true);
         members = 1;
-        alert('aaa');
         if( localStream != undefined ){
           await myVideo.play().catch(console.error);
         }
-        alert('bbb');
         audioContext = new AudioContext();
+        alert('bbb');
 
         //******************************************************************************************
         // カメラ選択チェンジイベント
@@ -551,6 +550,7 @@
         // 入室・退室ボタンクリックイベント
         //******************************************************************************************
         button_enter_leave.addEventListener('click', async () => {
+          alert('entry');
           if( input_my_name.value == '' ){
             alert('参加者名を入力してください。');
             return;
