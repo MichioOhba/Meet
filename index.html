@@ -157,23 +157,26 @@
         window.addEventListener( 'load', function() {
           let video_cnt = 0;
 
-//          alert('Agent:'+Agent);
-          navigator.mediaDevices.enumerateDevices()
-          .then(function(devices) {
-            devices.forEach(function(device) {
-              if( device.kind == 'videoinput' ){
-                video_cnt++;
-              }
-              if( video_cnt > 1 ){
-                lbl_camera.hidden = sel_camera.hidden = false;
-              }else{
-                lbl_camera.hidden = sel_camera.hidden = true;
-              }
-              console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+          try{
+            navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+              devices.forEach(function(device) {
+                if( device.kind == 'videoinput' ){
+                  video_cnt++;
+                }
+                if( video_cnt > 1 ){
+                  lbl_camera.hidden = sel_camera.hidden = false;
+                }else{
+                  lbl_camera.hidden = sel_camera.hidden = true;
+                }
+                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+              });
+            }).catch(function(err) {
+              console.log(err.name + ": " + err.message);
             });
-          }).catch(function(err) {
-            console.log(err.name + ": " + err.message);
-          });
+          }catch (e){
+            lbl_camera.hidden = sel_camera.hidden = true;
+          }
           video_container_setting( false, 1 );
           share_container_setting( false )
         }, false );
@@ -983,3 +986,4 @@
     </script>
   </body>
 </html>
+
