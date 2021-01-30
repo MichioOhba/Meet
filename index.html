@@ -158,26 +158,26 @@
           let video_cnt = 0;
 
           alert(Agent);
-//          try{
-//            navigator.mediaDevices.enumerateDevices()
-//            .then(function(devices) {
-//              devices.forEach(function(device) {
-//                if( device.kind == 'videoinput' ){
-//                  video_cnt++;
-//                }
-//                if( video_cnt > 1 ){
-//                  lbl_camera.hidden = sel_camera.hidden = false;
-//                }else{
-//                  lbl_camera.hidden = sel_camera.hidden = true;
-//                }
-//                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-//              });
-//            }).catch(function(err) {
-//              console.log(err.name + ": " + err.message);
-//            });
-//          }catch (e){
-//            lbl_camera.hidden = sel_camera.hidden = true;
-//          }
+          try{
+            navigator.mediaDevices.enumerateDevices()
+            .then(function(devices) {
+              devices.forEach(function(device) {
+                if( device.kind == 'videoinput' ){
+                  video_cnt++;
+               }
+                if( video_cnt > 1 ){
+                  lbl_camera.hidden = sel_camera.hidden = false;
+                }else{
+                  lbl_camera.hidden = sel_camera.hidden = true;
+                }
+                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+              });
+            }).catch(function(err) {
+              console.log(err.name + ": " + err.message);
+            });
+          }catch (e){
+            lbl_camera.hidden = sel_camera.hidden = true;
+          }
           lbl_camera.hidden = sel_camera.hidden = true;
           video_container_setting( false, 1 );
           share_container_setting( false )
@@ -525,9 +525,11 @@
         memberName.push({peerId:myPeerId, name:'未参加', video:true, audioTimer:undefined});
         let myVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, localStream, true);
         members = 1;
+        alret('aaa');
         if( localStream != undefined ){
           await myVideo.play().catch(console.error);
         }
+        alert('bbb');
         audioContext = new AudioContext();
 
         //******************************************************************************************
