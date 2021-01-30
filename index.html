@@ -182,11 +182,11 @@
           video_container_setting( false, 1 );
           share_container_setting( false )
 
-          request = new XMLHttpRequest();
-      request.open("GET", "sound2.mp3", true);
-      request.responseType = "arraybuffer";
-      request.onload = completeOnLoad;
-      request.send();
+          const request = new XMLHttpRequest();
+          request.open("GET", "sound2.mp3", true);
+          request.responseType = "arraybuffer";
+          request.onload = completeOnLoad;
+          request.send();
 
         }, false );
         //******************************************************************************************
@@ -535,6 +535,7 @@
         if( localStream != undefined ){
           await myVideo.play().catch(console.error);
         }
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
         audioContext = new AudioContext();
         alert('bbb');
 
