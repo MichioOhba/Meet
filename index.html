@@ -145,7 +145,8 @@
       let audioAnalyzer = null;
       let audioSource = null;
       let audioContext = null;
-      const Agent = navigator.userAgent;
+//      const Agent = navigator.userAgent;
+      const Agent = null;
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
       // windowイベント
@@ -157,26 +158,27 @@
         window.addEventListener( 'load', function() {
           let video_cnt = 0;
 
-          try{
-            navigator.mediaDevices.enumerateDevices()
-            .then(function(devices) {
-              devices.forEach(function(device) {
-                if( device.kind == 'videoinput' ){
-                  video_cnt++;
-                }
-                if( video_cnt > 1 ){
-                  lbl_camera.hidden = sel_camera.hidden = false;
-                }else{
-                  lbl_camera.hidden = sel_camera.hidden = true;
-                }
-                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
-              });
-            }).catch(function(err) {
-              console.log(err.name + ": " + err.message);
-            });
-          }catch (e){
-            lbl_camera.hidden = sel_camera.hidden = true;
-          }
+//          try{
+//            navigator.mediaDevices.enumerateDevices()
+//            .then(function(devices) {
+//              devices.forEach(function(device) {
+//                if( device.kind == 'videoinput' ){
+//                  video_cnt++;
+//                }
+//                if( video_cnt > 1 ){
+//                  lbl_camera.hidden = sel_camera.hidden = false;
+//                }else{
+//                  lbl_camera.hidden = sel_camera.hidden = true;
+//                }
+//                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+//              });
+//            }).catch(function(err) {
+//              console.log(err.name + ": " + err.message);
+//            });
+//          }catch (e){
+//            lbl_camera.hidden = sel_camera.hidden = true;
+//          }
+          lbl_camera.hidden = sel_camera.hidden = true;
           video_container_setting( false, 1 );
           share_container_setting( false )
         }, false );
