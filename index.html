@@ -145,8 +145,7 @@
       let audioAnalyzer = null;
       let audioSource = null;
       let audioContext = null;
-//      const Agent = navigator.userAgent;
-      const Agent = null;
+      const Agent = navigator.userAgent;
 
       //////////////////////////////////////////////////////////////////////////////////////////////////////
       // windowイベント
@@ -158,6 +157,7 @@
         window.addEventListener( 'load', function() {
           let video_cnt = 0;
 
+          alert(Agent);
 //          try{
 //            navigator.mediaDevices.enumerateDevices()
 //            .then(function(devices) {
@@ -988,4 +988,3 @@
     </script>
   </body>
 </html>
-
