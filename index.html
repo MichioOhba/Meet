@@ -170,14 +170,12 @@
                 }else{
                   lbl_camera.hidden = sel_camera.hidden = true;
                 }
-                alert(device.kind + ": " + device.label + " id = " + device.deviceId);
+                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
               });
             }).catch(function(err) {
-              alert(err);
               console.log(err.name + ": " + err.message);
             });
           }catch (e){
-            alert(e);
             lbl_camera.hidden = sel_camera.hidden = true;
           }
           video_container_setting( false, 1 );
