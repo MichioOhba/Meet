@@ -118,7 +118,7 @@
     <script src="//cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
     <script src="./key.js"></script>
     <script>
-      let localStream = undefined;
+      let myVideo = undefined;
       let peerMain, roomMain;
       let peerScreen, roomScreen;
       let share_container_width, share_container_height;
@@ -494,7 +494,7 @@
           const div = document.getElementById(memberName[index].peerId);
           const data = new Float32Array(audioAnalyzer.frequencyBinCount / 4);
           audioAnalyzer.getFloatFrequencyData(data);
-          let sum=0;
+          let sum = 0;
           for( let i=0; i<data.length; i++){sum+=data[i]*-1;}
           const style = sum/data.length > 100 ? '1px solid black' : '1px solid darkorange';
           Array.from(div.children).forEach(elm => {
@@ -520,14 +520,14 @@
           },
         }
         // カメラの接続
-        localStream = await navigator.mediaDevices.getUserMedia( localMadia )
+        const localStream = await navigator.mediaDevices.getUserMedia( localMadia )
           .catch(e => {alert('カメラとの接続でエラーが発生しました');});
         // ローカルストリーム用divの作成
         const newDiv = document.createElement("div");
         memberName.push({peerId:myPeerId, name:'未参加', video:true, audioTimer:undefined});
-        let myVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, localStream, true);
+        myVideo = makeVideoContainer(video_container, newDiv, div_width, div_height, localStream, true);
         members = 1;
-        if( localStream != undefined ){
+        if( myVideo != undefined ){
           await myVideo.play().catch(console.error);
         }
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -538,12 +538,15 @@
         //******************************************************************************************
         sel_camera.addEventListener('change', () => {
           localMadia.video.facingMode = sel_camera.value=='front'?'user':{ exact: 'environment' };
-          if( localStream !== undefined ){
-            localStream.getVideoTracks().forEach(camera => { camera.stop(); });
+          if( myVideo !== undefined ){
+            myVideo.srcObject.getVideoTracks().forEach(camera => { camera.stop(); });
           }
           navigator.mediaDevices.getUserMedia(localMadia).then(stream => {
             myVideo.srcObject = stream;
             myVideo.play();
+            if( myPeerId != 'myself' ){
+              roomMain.replaceStream(stream);
+            }
           }).catch(e => {alert('カメラとの接続でエラーが発生しました');});
         });
         //******************************************************************************************
@@ -577,7 +580,7 @@
               }
             }
             // ルームに参加
-            roomMain = peerMain.joinRoom(input_room_name.value,{ mode:'sfu', stream:localStream, });
+            roomMain = peerMain.joinRoom(input_room_name.value,{ mode:'sfu', stream:myVideo.srcObject, });
             button_enter_leave.innerText = '退室';
             button_enter_leave.disabled = false;
             lbl_name.hidden = input_my_name.hidden = lbl_room.hidden = input_room_name.hidden = true;
