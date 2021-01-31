@@ -162,7 +162,7 @@
             navigator.mediaDevices.enumerateDevices()
             .then(function(devices) {
               devices.forEach(function(device) {
-                if( device.kind == 'videoinput' ){
+                if( device.kind == 'videoinput' || device.kind == 'audioinput'){
                   video_cnt++;
                 }
                 if( video_cnt > 1 ){
