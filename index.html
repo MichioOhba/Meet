@@ -164,13 +164,13 @@
               devices.forEach(function(device) {
                 if( device.kind == 'videoinput' ){
                   video_cnt++;
-               }
+                }
                 if( video_cnt > 1 ){
                   lbl_camera.hidden = sel_camera.hidden = false;
                 }else{
                   lbl_camera.hidden = sel_camera.hidden = true;
                 }
-                console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+                alert(device.kind + ": " + device.label + " id = " + device.deviceId);
               });
             }).catch(function(err) {
               alert(err);
