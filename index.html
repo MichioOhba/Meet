@@ -182,31 +182,8 @@
           }
           video_container_setting( false, 1 );
           share_container_setting( false )
-
-//          audioRequest = new XMLHttpRequest();
-//          audioRequest.open("GET", "sound2.mp3", true);
-//          audioRequest.responseType = "arraybuffer";
-//          audioRequest.onload = completeOnLoad;
-//          audioRequest.send();
-
         }, false );
 
-    function completeOnLoad() {
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      audioContext = new AudioContext();
-      audioContext.createBufferSource().start(0);
-
-      // オーディオをデコード
-      audioContext.decodeAudioData(audioRequest.response, function (buf) {
-        source.buffer = buf;
-        source.loop = false;
-
-      });
-
-//      audioSource = audioContext.createBufferSource();
-    }
-        
-        
         //******************************************************************************************
         // 画面リサイズイベント
         //******************************************************************************************
@@ -574,7 +551,6 @@
         // 入室・退室ボタンクリックイベント
         //******************************************************************************************
         button_enter_leave.addEventListener('click', async () => {
-          alert('entry');
           if( input_my_name.value == '' ){
             alert('参加者名を入力してください。');
             return;
